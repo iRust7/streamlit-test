@@ -363,28 +363,39 @@ div[data-testid="stHorizontalBlock"] .stButton > button:hover {{
 }}
 [data-testid="stSidebar"] .stButton > button * {{ color: inherit !important; }}
 
-[data-testid="stChatInput"] {{ background: transparent !important; }}
-[data-testid="stChatInput"] > div {{
+[data-testid="stChatInput"] {{
     background: var(--paper) !important;
     border: 1px solid var(--ink) !important;
     border-radius: 0 !important;
-    box-shadow: 0 -2px 0 var(--bg) !important;
+    overflow: hidden;
+}}
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInput"] > div > div,
+[data-testid="stChatInputContainer"],
+[data-testid="stChatInputTextArea"] {{
+    background: var(--paper) !important;
 }}
 [data-testid="stChatInput"] textarea {{
-    background: transparent !important;
+    background: var(--paper) !important;
     color: var(--ink) !important;
+    caret-color: var(--ink) !important;
+    -webkit-text-fill-color: var(--ink) !important;
     font-size: 0.94rem !important;
     font-family: 'Inter', sans-serif !important;
 }}
 [data-testid="stChatInput"] textarea::placeholder {{
     color: var(--muted) !important;
+    -webkit-text-fill-color: var(--muted) !important;
+    opacity: 1 !important;
     font-style: italic;
 }}
 [data-testid="stChatInput"] button {{
     background: var(--ink) !important;
     color: var(--bg) !important;
     border-radius: 0 !important;
+    border: none !important;
 }}
+[data-testid="stChatInput"] button svg {{ color: var(--bg) !important; fill: var(--bg) !important; }}
 [data-testid="stChatInput"] button:hover {{ background: var(--accent-2) !important; }}
 [data-testid="stBottom"], [data-testid="stBottomBlockContainer"] {{
     background: var(--bg) !important;
