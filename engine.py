@@ -177,3 +177,16 @@ class Engine:
 
     def get_info(self, key: str) -> str:
         return self.info.get(key, "")
+
+    def get_stats(self) -> dict:
+        total_titles = len(self.catalog)
+        total_stock  = sum(b["stock"] for b in self.catalog.values())
+        available    = sum(1 for b in self.catalog.values() if b["stock"] > 0)
+        out_of_stock = total_titles - available
+        return {
+            "titles":       total_titles,
+            "stock":        total_stock,
+            "available":    available,
+            "out_of_stock": out_of_stock,
+            "categories":   len(self.categories),
+        }
