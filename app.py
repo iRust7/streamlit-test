@@ -4,263 +4,291 @@ from FSM import FSM
 
 st.set_page_config(
     page_title="Perpustakaan Digital",
-    page_icon="📚",
-    layout="centered",
+    page_icon="L",
+    layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ──────────────────────────────────────────────────────────────────────────
-# STYLES
-# ──────────────────────────────────────────────────────────────────────────
-st.markdown("""
-<style>
-    /* ── Base ─────────────────────────────────────────────── */
-    .stApp {
-        background:
-            radial-gradient(circle at 0% 0%,   #EFE3D0 0%, transparent 40%),
-            radial-gradient(circle at 100% 0%, #E8DCC4 0%, transparent 40%),
-            #F7F1E6;
-    }
-    html, body, [class*="css"] {
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    }
-    #MainMenu, footer, header { visibility: hidden; }
-    .block-container { padding-top: 1.5rem; padding-bottom: 6rem; }
+ICON_BOT = """<svg viewBox='0 0 24 24' width='18' height='18' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20'/></svg>"""
+ICON_USER = """<svg viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>"""
+ICON_BOOK = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/></svg>"""
+ICON_LAYERS = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='12 2 2 7 12 12 22 7 12 2'/><polyline points='2 17 12 22 22 17'/><polyline points='2 12 12 17 22 12'/></svg>"""
+ICON_TAG = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z'/><line x1='7' y1='7' x2='7.01' y2='7'/></svg>"""
+ICON_SEARCH = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>"""
+ICON_CLOCK = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><polyline points='12 6 12 12 16 14'/></svg>"""
+ICON_LIST = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='8' y1='6' x2='21' y2='6'/><line x1='8' y1='12' x2='21' y2='12'/><line x1='8' y1='18' x2='21' y2='18'/><line x1='3' y1='6' x2='3.01' y2='6'/><line x1='3' y1='12' x2='3.01' y2='12'/><line x1='3' y1='18' x2='3.01' y2='18'/></svg>"""
+ICON_CHECK = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>"""
+ICON_X = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>"""
+ICON_REFRESH = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='23 4 23 10 17 10'/><polyline points='1 20 1 14 7 14'/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'/></svg>"""
+ICON_SPARK = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/></svg>"""
+ICON_INFO = """<svg viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><line x1='12' y1='16' x2='12' y2='12'/><line x1='12' y1='8' x2='12.01' y2='8'/></svg>"""
 
-    /* ── Header ───────────────────────────────────────────── */
-    .lib-header {
-        background: linear-gradient(135deg, #4E342E 0%, #6D4C41 50%, #8D6E63 100%);
+st.markdown(f"""
+<style>
+    :root {{
+        --bg:        #F4F6FB;
+        --surface:   #FFFFFF;
+        --border:    #E4E7EE;
+        --text:      #1B2333;
+        --muted:     #6B7280;
+        --primary:   #4F46E5;
+        --primary-2: #6366F1;
+        --accent:    #10B981;
+        --warn:      #F59E0B;
+        --pink:      #EC4899;
+        --sky:       #0EA5E9;
+        --violet:    #8B5CF6;
+    }}
+    .stApp {{ background: var(--bg); }}
+    html, body, [class*="css"] {{
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        color: var(--text);
+    }}
+    #MainMenu, footer, header {{ visibility: hidden; }}
+    .block-container {{ padding-top: 1rem; padding-bottom: 7rem; max-width: 1100px; }}
+
+    .lib-header {{
+        background: linear-gradient(120deg, #4F46E5 0%, #6366F1 50%, #8B5CF6 100%);
         color: white;
         padding: 1.4rem 1.6rem;
-        border-radius: 16px;
+        border-radius: 18px;
         margin-bottom: 1rem;
-        box-shadow: 0 8px 24px rgba(78,52,46,0.18);
+        box-shadow: 0 10px 30px rgba(79,70,229,0.25);
         position: relative;
         overflow: hidden;
-    }
-    .lib-header::after {
-        content: "";
-        position: absolute;
-        top: -40%; right: -10%;
-        width: 220px; height: 220px;
-        background: rgba(255,255,255,0.06);
-        border-radius: 50%;
-    }
-    .lib-header h1 {
-        margin: 0;
-        font-size: 1.65rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        display: flex; align-items: center; gap: 0.5rem;
-    }
-    .lib-header p {
-        margin: 0.3rem 0 0;
-        font-size: 0.85rem;
-        opacity: 0.85;
-    }
-    .header-meta {
-        position: absolute; top: 1rem; right: 1.2rem;
-        display: flex; align-items: center; gap: 0.4rem;
-        font-size: 0.72rem; opacity: 0.85;
-    }
-    .pulse-dot {
-        width: 8px; height: 8px; border-radius: 50%;
-        background: #7CFC9C;
-        box-shadow: 0 0 0 0 rgba(124,252,156,0.7);
+    }}
+    .lib-header::before {{
+        content: ""; position: absolute; inset: 0;
+        background: radial-gradient(circle at 90% 10%, rgba(255,255,255,0.18), transparent 40%);
+    }}
+    .lib-header h1 {{
+        margin: 0; font-size: 1.5rem; font-weight: 700;
+        letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.6rem;
+        position: relative;
+    }}
+    .lib-header p {{ margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.9; position: relative; }}
+    .lib-header .brand-mark {{
+        width: 36px; height: 36px; border-radius: 10px;
+        background: rgba(255,255,255,0.18); display: inline-flex;
+        align-items: center; justify-content: center;
+    }}
+    .header-meta {{
+        position: absolute; top: 1.1rem; right: 1.4rem;
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        font-size: 0.72rem; opacity: 0.95;
+        background: rgba(255,255,255,0.15);
+        padding: 0.25rem 0.65rem; border-radius: 999px;
+        backdrop-filter: blur(6px);
+    }}
+    .pulse-dot {{
+        width: 7px; height: 7px; border-radius: 50%; background: #34D399;
+        box-shadow: 0 0 0 0 rgba(52,211,153,0.7);
         animation: pulse 1.8s infinite;
-    }
-    @keyframes pulse {
-        0%   { box-shadow: 0 0 0 0 rgba(124,252,156,0.7); }
-        70%  { box-shadow: 0 0 0 8px rgba(124,252,156,0); }
-        100% { box-shadow: 0 0 0 0 rgba(124,252,156,0); }
-    }
+    }}
+    @keyframes pulse {{
+        0%   {{ box-shadow: 0 0 0 0 rgba(52,211,153,0.7); }}
+        70%  {{ box-shadow: 0 0 0 8px rgba(52,211,153,0); }}
+        100% {{ box-shadow: 0 0 0 0 rgba(52,211,153,0); }}
+    }}
 
-    /* ── Stats row ───────────────────────────────────────── */
-    .stats-row {
+    .stats-row {{
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 0.6rem;
+        gap: 0.7rem;
         margin-bottom: 1rem;
-    }
-    .stat-card {
-        background: white;
-        border: 1px solid #E5D9C7;
-        border-radius: 12px;
-        padding: 0.7rem 0.9rem;
-        box-shadow: 0 2px 6px rgba(78,52,46,0.05);
-    }
-    .stat-card .label {
-        font-size: 0.7rem;
-        color: #8D6E63;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-weight: 600;
-    }
-    .stat-card .value {
-        font-size: 1.4rem;
-        color: #3E2723;
-        font-weight: 700;
-        margin-top: 0.15rem;
-    }
-
-    /* ── Chat bubbles ─────────────────────────────────────── */
-    .msg-row {
-        display: flex;
-        align-items: flex-end;
-        gap: 0.5rem;
-        margin: 0.5rem 0;
-        animation: fadeUp 0.28s ease-out;
-    }
-    .msg-row.user { justify-content: flex-end; }
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(6px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-    .avatar {
-        width: 32px; height: 32px;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 0.95rem;
+    }}
+    .stat-card {{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 0.85rem 1rem;
+        display: flex; align-items: center; gap: 0.85rem;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }}
+    .stat-card:hover {{
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(27,35,51,0.08);
+    }}
+    .stat-icon {{
+        width: 38px; height: 38px; border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    }
-    .avatar.bot  { background: linear-gradient(135deg,#8D6E63,#5D4037); color: white; }
-    .avatar.user { background: linear-gradient(135deg,#3E2723,#5D4037); color: white; }
+    }}
+    .stat-icon.indigo  {{ background: #EEF2FF; color: var(--primary); }}
+    .stat-icon.emerald {{ background: #ECFDF5; color: var(--accent);  }}
+    .stat-icon.amber   {{ background: #FFFBEB; color: var(--warn);    }}
+    .stat-text .label {{ font-size: 0.7rem; color: var(--muted); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }}
+    .stat-text .value {{ font-size: 1.35rem; font-weight: 700; color: var(--text); line-height: 1.1; margin-top: 2px; }}
 
-    .bubble-user {
-        background: linear-gradient(135deg, #5D4037, #4E342E);
+    .chat-shell {{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 1rem 1.1rem;
+        min-height: 360px;
+        box-shadow: 0 4px 16px rgba(27,35,51,0.04);
+    }}
+    .msg-row {{
+        display: flex; align-items: flex-end; gap: 0.55rem;
+        margin: 0.4rem 0; animation: fadeUp 0.28s ease-out;
+    }}
+    .msg-row.user {{ justify-content: flex-end; }}
+    @keyframes fadeUp {{
+        from {{ opacity: 0; transform: translateY(6px); }}
+        to   {{ opacity: 1; transform: translateY(0); }}
+    }}
+    .avatar {{
+        width: 32px; height: 32px; border-radius: 10px;
+        display: inline-flex; align-items: center; justify-content: center;
+        flex-shrink: 0; color: white;
+    }}
+    .avatar.bot  {{ background: linear-gradient(135deg, #4F46E5, #6366F1); }}
+    .avatar.user {{ background: linear-gradient(135deg, #10B981, #059669); }}
+
+    .bubble-wrap {{ display: flex; flex-direction: column; max-width: 78%; }}
+    .bubble-wrap.user {{ align-items: flex-end; }}
+    .bubble {{
+        padding: 0.7rem 0.95rem;
+        font-size: 0.92rem; line-height: 1.55;
+    }}
+    .bubble-user {{
+        background: linear-gradient(135deg, #4F46E5, #6366F1);
         color: white;
-        padding: 0.7rem 1rem;
-        border-radius: 18px 18px 4px 18px;
-        max-width: 78%;
-        font-size: 0.92rem;
-        line-height: 1.45;
-        box-shadow: 0 2px 6px rgba(78,52,46,0.18);
-    }
-    .bubble-bot {
-        background: white;
-        color: #2c1a0e;
-        padding: 0.75rem 1rem;
-        border-radius: 18px 18px 18px 4px;
-        border: 1px solid #E5D9C7;
-        max-width: 82%;
-        font-size: 0.92rem;
-        line-height: 1.55;
-        white-space: pre-line;
-        box-shadow: 0 2px 6px rgba(78,52,46,0.06);
-    }
-    .bubble-bot strong { color: #3E2723; }
-    .ts {
-        font-size: 0.65rem;
-        color: #A1887F;
-        margin: 0.1rem 2.5rem 0.4rem;
-    }
-    .ts.user { text-align: right; margin: 0.1rem 2.5rem 0.4rem 0; }
+        border-radius: 16px 16px 4px 16px;
+        box-shadow: 0 4px 10px rgba(79,70,229,0.18);
+    }}
+    .bubble-bot {{
+        background: #F8FAFC;
+        color: var(--text);
+        border: 1px solid #E2E8F0;
+        border-radius: 16px 16px 16px 4px;
+    }}
+    .bubble-bot strong {{ color: var(--primary); font-weight: 600; }}
+    .bubble-bot code {{
+        background: #EEF2FF; color: var(--primary);
+        padding: 1px 6px; border-radius: 5px; font-size: 0.85em;
+    }}
+    .ts {{ font-size: 0.65rem; color: var(--muted); margin-top: 0.25rem; padding: 0 0.3rem; }}
 
-    /* ── Quick chips ─────────────────────────────────────── */
-    .chip-label {
-        font-size: 0.7rem;
-        color: #8D6E63;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin: 0.6rem 0 0.3rem;
-    }
-    div[data-testid="stHorizontalBlock"] .stButton > button {
+    .chip-label {{
+        font-size: 0.68rem; color: var(--muted); font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        margin: 1rem 0 0.4rem; display: flex; align-items: center; gap: 0.35rem;
+    }}
+    div[data-testid="stHorizontalBlock"] .stButton > button {{
         border-radius: 999px !important;
-        background: white !important;
-        color: #5D4037 !important;
-        border: 1px solid #D7C4A8 !important;
+        background: var(--surface) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
         font-weight: 500 !important;
         font-size: 0.8rem !important;
-        padding: 0.35rem 0.9rem !important;
-        box-shadow: 0 1px 3px rgba(78,52,46,0.05) !important;
+        padding: 0.4rem 0.95rem !important;
+        box-shadow: 0 1px 2px rgba(27,35,51,0.04) !important;
         transition: all 0.18s ease !important;
-    }
-    div[data-testid="stHorizontalBlock"] .stButton > button:hover {
-        background: #5D4037 !important;
+    }}
+    div[data-testid="stHorizontalBlock"] .stButton > button:hover {{
+        background: var(--primary) !important;
         color: white !important;
-        border-color: #5D4037 !important;
+        border-color: var(--primary) !important;
         transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(78,52,46,0.18) !important;
-    }
+        box-shadow: 0 6px 14px rgba(79,70,229,0.25) !important;
+    }}
 
-    /* ── Sidebar ─────────────────────────────────────────── */
-    [data-testid="stSidebar"] {
-        background: #FBF6EC;
-        border-right: 1px solid #E5D9C7;
-    }
-    .state-pill {
-        display: inline-block;
-        padding: 0.25rem 0.8rem;
+    [data-testid="stSidebar"] {{
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+    }}
+    [data-testid="stSidebar"] * {{ color: var(--text) !important; }}
+    [data-testid="stSidebar"] h3 {{
+        font-size: 0.75rem !important;
+        color: var(--muted) !important;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700 !important;
+        margin-bottom: 0.6rem !important;
+    }}
+    .state-pill {{
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.35rem 0.85rem;
         border-radius: 999px;
-        font-size: 0.7rem;
+        font-size: 0.72rem;
         font-weight: 700;
-        letter-spacing: 0.06em;
-    }
-    .state-desc {
+        letter-spacing: 0.05em;
+    }}
+    .state-pill .ind {{ width: 7px; height: 7px; border-radius: 50%; }}
+    .state-desc {{
         font-size: 0.78rem;
-        color: #6D4C41;
-        margin-top: 0.4rem;
+        color: var(--muted) !important;
+        margin-top: 0.45rem;
         line-height: 1.4;
-    }
-    .tip-card {
-        background: white;
-        border-left: 3px solid #8D6E63;
-        border-radius: 8px;
-        padding: 0.5rem 0.7rem;
+    }}
+    .tip-card {{
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 0.55rem 0.75rem;
         margin-bottom: 0.4rem;
         font-size: 0.78rem;
-        color: #3E2723;
+        display: flex; gap: 0.55rem; align-items: flex-start;
         transition: all 0.18s ease;
-    }
-    .tip-card:hover {
-        border-left-color: #5D4037;
-        background: #FFF8EE;
+    }}
+    .tip-card:hover {{
+        border-color: var(--primary);
+        background: #F5F7FF;
         transform: translateX(2px);
-    }
-    .tip-card b { color: #4E342E; }
-    .tip-card .desc { color: #8D6E63; font-size: 0.72rem; margin-top: 0.1rem; }
+    }}
+    .tip-card .tip-ico {{
+        width: 26px; height: 26px; border-radius: 7px;
+        background: #EEF2FF; color: var(--primary);
+        display: inline-flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }}
+    .tip-card b {{ color: var(--text) !important; font-weight: 600; }}
+    .tip-card .desc {{ color: var(--muted) !important; font-size: 0.7rem; margin-top: 1px; }}
 
-    /* sidebar reset button */
-    [data-testid="stSidebar"] .stButton > button {
+    [data-testid="stSidebar"] .stButton > button {{
         width: 100% !important;
         border-radius: 10px !important;
-        background: #5D4037 !important;
+        background: var(--primary) !important;
         color: white !important;
         border: none !important;
         font-weight: 600 !important;
-        padding: 0.55rem !important;
-    }
-    [data-testid="stSidebar"] .stButton > button:hover {
-        background: #4E342E !important;
-        transform: none;
-    }
+        padding: 0.6rem !important;
+        font-size: 0.85rem !important;
+    }}
+    [data-testid="stSidebar"] .stButton > button:hover {{
+        background: #4338CA !important;
+    }}
+    [data-testid="stSidebar"] .stButton > button * {{ color: white !important; }}
 
-    /* ── Chat input ──────────────────────────────────────── */
-    [data-testid="stChatInput"] {
-        background: transparent !important;
-    }
-    [data-testid="stChatInput"] textarea {
+    [data-testid="stChatInput"] {{ background: transparent !important; }}
+    [data-testid="stChatInput"] > div {{
+        background: var(--surface) !important;
+        border: 1px solid var(--border) !important;
         border-radius: 14px !important;
-        border: 2px solid #D7C4A8 !important;
-        background: white !important;
-    }
-    [data-testid="stChatInput"] textarea:focus {
-        border-color: #5D4037 !important;
-        box-shadow: 0 0 0 3px rgba(93,64,55,0.12) !important;
-    }
+        box-shadow: 0 -2px 14px rgba(27,35,51,0.05) !important;
+    }}
+    [data-testid="stChatInput"] textarea {{
+        background: transparent !important;
+        color: var(--text) !important;
+        font-size: 0.92rem !important;
+    }}
+    [data-testid="stChatInput"] textarea::placeholder {{ color: var(--muted) !important; }}
+    [data-testid="stChatInput"] button {{
+        background: var(--primary) !important;
+        color: white !important;
+        border-radius: 10px !important;
+    }}
+    [data-testid="stChatInput"] button:hover {{ background: #4338CA !important; }}
+    [data-testid="stBottom"] {{ background: var(--bg) !important; }}
+    [data-testid="stBottomBlockContainer"] {{ background: var(--bg) !important; padding-bottom: 1rem !important; }}
 
-    /* scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-thumb { background: #D7C4A8; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #8D6E63; }
+    ::-webkit-scrollbar {{ width: 8px; height: 8px; }}
+    ::-webkit-scrollbar-thumb {{ background: #CBD5E1; border-radius: 4px; }}
+    ::-webkit-scrollbar-thumb:hover {{ background: var(--primary); }}
 </style>
 """, unsafe_allow_html=True)
 
-# ──────────────────────────────────────────────────────────────────────────
-# STATE
-# ──────────────────────────────────────────────────────────────────────────
 if "fsm" not in st.session_state:
     st.session_state.fsm = FSM()
 if "history" not in st.session_state:
@@ -269,12 +297,26 @@ if "queued_input" not in st.session_state:
     st.session_state.queued_input = None
 
 
+def render_markdown(text: str) -> str:
+    import re
+    safe = (text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;"))
+    safe = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", safe, flags=re.DOTALL)
+    safe = re.sub(r"`([^`]+)`", r"<code>\1</code>", safe)
+    safe = safe.replace("\n", "<br>")
+    return safe
+
+
 def send_message(text: str):
     text = text.strip()
     if not text:
         return
-    now = datetime.now().strftime("%H:%M")
-    st.session_state.history.append({"role": "user", "text": text, "ts": now})
+    st.session_state.history.append({
+        "role": "user",
+        "text": text,
+        "ts": datetime.now().strftime("%H:%M"),
+    })
     reply = st.session_state.fsm.transition(text)
     st.session_state.history.append({
         "role": "bot",
@@ -283,92 +325,90 @@ def send_message(text: str):
     })
 
 
-# ──────────────────────────────────────────────────────────────────────────
-# HEADER
-# ──────────────────────────────────────────────────────────────────────────
-st.markdown("""
+st.markdown(f"""
 <div class="lib-header">
     <div class="header-meta"><span class="pulse-dot"></span> online</div>
-    <h1>📚 Perpustakaan Digital</h1>
-    <p>Asisten cerdas berbasis FSM — cari, pinjam, dan kelola buku</p>
+    <h1><span class="brand-mark">{ICON_BOT}</span> Perpustakaan Digital</h1>
+    <p>Asisten cerdas berbasis Finite State Machine</p>
 </div>
 """, unsafe_allow_html=True)
 
-# ──────────────────────────────────────────────────────────────────────────
-# STATS
-# ──────────────────────────────────────────────────────────────────────────
 stats = st.session_state.fsm.engine.get_stats()
 st.markdown(f"""
 <div class="stats-row">
     <div class="stat-card">
-        <div class="label">Total Judul</div>
-        <div class="value">{stats['titles']}</div>
+        <div class="stat-icon indigo">{ICON_BOOK}</div>
+        <div class="stat-text">
+            <div class="label">Total Judul</div>
+            <div class="value">{stats['titles']}</div>
+        </div>
     </div>
     <div class="stat-card">
-        <div class="label">Stok Tersedia</div>
-        <div class="value">{stats['stock']}</div>
+        <div class="stat-icon emerald">{ICON_LAYERS}</div>
+        <div class="stat-text">
+            <div class="label">Stok Tersedia</div>
+            <div class="value">{stats['stock']}</div>
+        </div>
     </div>
     <div class="stat-card">
-        <div class="label">Kategori</div>
-        <div class="value">{stats['categories']}</div>
+        <div class="stat-icon amber">{ICON_TAG}</div>
+        <div class="stat-text">
+            <div class="label">Kategori</div>
+            <div class="value">{stats['categories']}</div>
+        </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ──────────────────────────────────────────────────────────────────────────
-# SIDEBAR
-# ──────────────────────────────────────────────────────────────────────────
 STATE_INFO = {
-    "DEFAULT": ("#9E9E9E", "Menunggu input pertama"),
-    "ACTIVE":  ("#5D4037", "Siap menerima perintah"),
-    "BROWSE":  ("#1565C0", "Sedang mencari buku"),
-    "BORROW":  ("#2E7D32", "Menunggu judul buku"),
-    "CONFIRM": ("#E65100", "Menunggu konfirmasi"),
-    "END":     ("#6A1B9A", "Sesi telah selesai"),
+    "DEFAULT": ("#9CA3AF", "Menunggu input pertama"),
+    "ACTIVE":  ("#4F46E5", "Siap menerima perintah"),
+    "BROWSE":  ("#0EA5E9", "Sedang mencari buku"),
+    "BORROW":  ("#10B981", "Menunggu judul buku"),
+    "CONFIRM": ("#F59E0B", "Menunggu konfirmasi"),
+    "END":     ("#8B5CF6", "Sesi telah selesai"),
 }
 
 with st.sidebar:
     st.markdown("### Status FSM")
     cur = st.session_state.fsm.state
-    col, desc = STATE_INFO.get(cur, ("#5D4037", ""))
+    col, desc = STATE_INFO.get(cur, ("#4F46E5", ""))
     st.markdown(
         f'<span class="state-pill" '
-        f'style="background:{col}1F;color:{col};border:1px solid {col}66">'
-        f'● {cur}</span>'
+        f'style="background:{col}1A;color:{col};border:1px solid {col}55">'
+        f'<span class="ind" style="background:{col}"></span>{cur}</span>'
         f'<div class="state-desc">{desc}</div>',
         unsafe_allow_html=True,
     )
 
-    st.markdown("---")
-    st.markdown("**Perintah yang dikenali**")
+    st.markdown("### Perintah")
     tips = [
-        ("halo", "Mulai percakapan"),
-        ("cari [judul/kategori]", "Cari buku"),
-        ("katalog", "Lihat semua buku"),
-        ("kategori", "Lihat kategori"),
-        ("pinjam [judul]", "Pinjam buku"),
-        ("stok [judul]", "Cek ketersediaan"),
-        ("jam buka", "Jam operasional"),
-        ("syarat pinjam", "Ketentuan"),
-        ("denda", "Info denda"),
-        ("reset", "Mulai dari awal"),
+        (ICON_SPARK,  "halo",                   "Mulai percakapan"),
+        (ICON_SEARCH, "cari [judul/kategori]",  "Cari buku"),
+        (ICON_LIST,   "katalog",                "Lihat semua buku"),
+        (ICON_TAG,    "kategori",               "Lihat kategori"),
+        (ICON_BOOK,   "pinjam [judul]",         "Pinjam buku"),
+        (ICON_LAYERS, "stok [judul]",           "Cek ketersediaan"),
+        (ICON_CLOCK,  "jam buka",               "Jam operasional"),
+        (ICON_INFO,   "syarat pinjam",          "Ketentuan"),
+        (ICON_INFO,   "denda",                  "Info denda"),
+        (ICON_REFRESH,"reset",                  "Mulai dari awal"),
     ]
-    for cmd, d in tips:
+    for ic, cmd, d in tips:
         st.markdown(
-            f'<div class="tip-card"><b>{cmd}</b>'
-            f'<div class="desc">{d}</div></div>',
+            f'<div class="tip-card">'
+            f'<span class="tip-ico">{ic}</span>'
+            f'<div><b>{cmd}</b><div class="desc">{d}</div></div>'
+            f'</div>',
             unsafe_allow_html=True,
         )
 
-    st.markdown("---")
-    if st.button("🔄 Reset Percakapan"):
+    st.markdown("### Sesi")
+    if st.button("Reset Percakapan", key="reset_btn"):
         st.session_state.fsm = FSM()
         st.session_state.history = []
         st.rerun()
 
-# ──────────────────────────────────────────────────────────────────────────
-# OPENING
-# ──────────────────────────────────────────────────────────────────────────
 if not st.session_state.history:
     opening = st.session_state.fsm.transition("halo")
     st.session_state.history.append({
@@ -377,65 +417,64 @@ if not st.session_state.history:
         "ts": datetime.now().strftime("%H:%M"),
     })
 
-# ──────────────────────────────────────────────────────────────────────────
-# CHAT
-# ──────────────────────────────────────────────────────────────────────────
+chat_html = ['<div class="chat-shell">']
 for msg in st.session_state.history:
     ts = msg.get("ts", "")
+    body = render_markdown(msg["text"])
     if msg["role"] == "user":
-        st.markdown(
+        chat_html.append(
             f'<div class="msg-row user">'
-            f'<div class="bubble-user">{msg["text"]}</div>'
-            f'<div class="avatar user">🙂</div>'
+            f'<div class="bubble-wrap user">'
+            f'<div class="bubble bubble-user">{body}</div>'
+            f'<div class="ts">{ts}</div>'
             f'</div>'
-            f'<div class="ts user">{ts}</div>',
-            unsafe_allow_html=True,
+            f'<div class="avatar user">{ICON_USER}</div>'
+            f'</div>'
         )
     else:
-        st.markdown(
+        chat_html.append(
             f'<div class="msg-row">'
-            f'<div class="avatar bot">📖</div>'
-            f'<div class="bubble-bot">{msg["text"]}</div>'
+            f'<div class="avatar bot">{ICON_BOT}</div>'
+            f'<div class="bubble-wrap">'
+            f'<div class="bubble bubble-bot">{body}</div>'
+            f'<div class="ts">{ts}</div>'
             f'</div>'
-            f'<div class="ts">{ts}</div>',
-            unsafe_allow_html=True,
+            f'</div>'
         )
+chat_html.append('</div>')
+st.markdown("".join(chat_html), unsafe_allow_html=True)
 
-# ──────────────────────────────────────────────────────────────────────────
-# QUICK CHIPS  — context-aware berdasarkan FSM state
-# ──────────────────────────────────────────────────────────────────────────
-def render_chips():
-    state = st.session_state.fsm.state
-    if state == "CONFIRM":
-        chips = [("✅ ya", "ya"), ("❌ tidak", "tidak")]
-    elif state == "BORROW":
-        chips = [("Kalkulus", "kalkulus"),
-                 ("Pemrograman Python", "pemrograman python"),
-                 ("Batal", "tidak")]
-    else:
-        chips = [
-            ("📚 Katalog",      "katalog"),
-            ("🏷️ Kategori",     "kategori"),
-            ("🔍 Cari kalkulus", "cari kalkulus"),
-            ("🕐 Jam buka",     "jam buka"),
-            ("📋 Syarat",       "syarat pinjam"),
-        ]
+st.markdown(
+    f'<div class="chip-label">{ICON_SPARK} Saran cepat</div>',
+    unsafe_allow_html=True,
+)
 
-    st.markdown('<div class="chip-label">Saran cepat</div>', unsafe_allow_html=True)
-    cols = st.columns(len(chips))
-    for i, (label, cmd) in enumerate(chips):
-        if cols[i].button(label, key=f"chip_{state}_{i}"):
-            st.session_state.queued_input = cmd
-            st.rerun()
+state = st.session_state.fsm.state
+if state == "CONFIRM":
+    chips = [("Ya, lanjutkan", "ya"), ("Batalkan", "tidak")]
+elif state == "BORROW":
+    chips = [
+        ("Kalkulus", "kalkulus"),
+        ("Pemrograman Python", "pemrograman python"),
+        ("Batal", "tidak"),
+    ]
+else:
+    chips = [
+        ("Lihat katalog", "katalog"),
+        ("Kategori",      "kategori"),
+        ("Cari kalkulus", "cari kalkulus"),
+        ("Jam buka",      "jam buka"),
+        ("Syarat pinjam", "syarat pinjam"),
+    ]
 
-render_chips()
+cols = st.columns(len(chips))
+for i, (label, cmd) in enumerate(chips):
+    if cols[i].button(label, key=f"chip_{state}_{i}"):
+        st.session_state.queued_input = cmd
+        st.rerun()
 
-# ──────────────────────────────────────────────────────────────────────────
-# INPUT — chat_input (sticky, enter-to-send)
-# ──────────────────────────────────────────────────────────────────────────
-user_text = st.chat_input("Ketik pesanmu... (contoh: cari buku kalkulus)")
+user_text = st.chat_input("Ketik pesanmu... contoh: cari buku kalkulus")
 
-# proses chip yang ter-queue
 if st.session_state.queued_input:
     queued = st.session_state.queued_input
     st.session_state.queued_input = None
